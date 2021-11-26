@@ -53,7 +53,9 @@
     {{ php_executable }} {{ composer_path }} self-update {{ composer_version_branch }}
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
-  when: composer_keep_updated | bool
+  when:
+    - composer_keep_updated | bool
+    - composer_bin.stat.exists
 
 - name: Ensure composer directory exists.
   become: true
