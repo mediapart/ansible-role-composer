@@ -8,6 +8,19 @@
   stat: "path={{ composer_path }}"
   register: composer_bin
 
+- name: Get Composer version if already installed
+  shell: >
+    set -o pipefail;
+    COMPOSER_ALLOW_SUPERUSER=1 {{ php_executable }} {{ composer_path }} --version | cut -f3 -d" "
+  args:
+    executable: /bin/bash
+  failed_when: false
+  changed_when: false
+  register: current_composer_version
+  when:
+    - composer_bin.stat.exists
+    - composer_version is defined
+
 - name: Get Composer installer signature.
   uri:
     url: https://composer.github.io/installer.sig
@@ -35,12 +48,15 @@
     creates={{ composer_path }}
   when: not composer_bin.stat.exists
 
-- name: Update Composer to latest version (if configured).
+- name: Update Composer to specific or latest version (if configured).
   command: >
-    {{ php_executable }} {{ composer_path }} self-update {{ composer_version_branch }}
+    {{ php_executable }} {{ composer_path }} self-update {{ composer_version | default(composer_version_branch) }}
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
-  when: composer_keep_updated | bool
+  when:
+    - composer_keep_updated | bool
+    - composer_bin.stat.exists
+    - current_composer_version.stdout != composer_version
 
 - name: Ensure composer directory exists.
   become: true

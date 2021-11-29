@@ -19,7 +19,7 @@ The path where composer will be installed and available to your system. Should b
 
     composer_keep_updated: false
 
-Set this to `true` to update Composer to the latest release every time the playbook is run.
+Set this to `true` to update Composer to the specified `composer_version` or to the latest release every time the playbook is run.
 
     composer_home_path: '~/.composer'
     composer_home_owner: root
@@ -29,11 +29,11 @@ The `COMPOSER_HOME` path and directory ownership; this is the directory where gl
 
     composer_version: ''
 
-You can install a specific release of Composer, e.g. `composer_version: '1.0.0-alpha11'`. If left empty the latest development version will be installed. Note that `composer_keep_updated` will override this variable, as it will always install the latest development version.
+You can install a specific release of Composer, e.g. `composer_version: '1.0.0-alpha11'`. If left empty the latest development version will be installed. Note that `composer_keep_updated` will update to this specific version.
 
     composer_version_branch: '--2'
 
-You can choose which major branch of composer you wish to use. Default is `--2`. Note that `composer_keep_updated` will update the latest version available for this branch.
+You can choose which major branch of composer you wish to use. Default is `--2`. Note that `composer_keep_updated` will update the latest version available for this branch by default if `composer_version` is not defined.
 
     composer_global_packages: []
 
